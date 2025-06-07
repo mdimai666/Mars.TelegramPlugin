@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <!--Author-->
+        <PackageId>mdimai666.Mars.TelegramPlugin</PackageId>
+        <Version>0.5.2</Version>
+        <PackageVersion>0.5.2</PackageVersion>
+        <!--Public-->
+        <Authors>mdimai666</Authors>
+        <Company>mdimai666</Company>
+        <Product>Mars.TelegramPlugin</Product>
+        <PackageTags>Mars;telegram</PackageTags>
+        <Description>
+            Mars.TelegramPlugin - provide telegram functions for Mars
+            - Send notify
+            - Add Nodes
+        </Description>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/mdimai666/Mars.TelegramPlugin</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
+        <!--<CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>-->
+        <!--<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>-->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyMetadata Include="PackageTags" Value="$(PackageTags)" />
+        <AssemblyMetadata Include="PackageId" Value="$(PackageId)" />
+        <AssemblyMetadata Include="RepositoryUrl" Value="$(RepositoryUrl)" />
+        <AssemblyMetadata Include="PackageIcon" Value="$(PackageIcon)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Link="wwwroot\icon.png" CopyToOutputDirectory="PreserveNewest" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.6.2-alpha.26" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" PrivateAssets="all" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.6.2-alpha.26" />
+        <PackageReference Include="Telegram.Bot" Version="22.5.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Mars.TelegramPlugin.Nodes\Mars.TelegramPlugin.Nodes.csproj" />
+        <ProjectReference Include="..\Mars.TelegramPlugin.Shared\Mars.TelegramPlugin.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Update="appsettings.local.json">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <Target Name="RunPostPublishScript" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release111'">
+        <Exec Command="dotnet $(OutDir)Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
+    </Target>
+
+    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug111'">
+        <Exec Command="dotnet $(OutDir)Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
+    </Target>
+
+    <Target Name="RunPostPublishScript" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
+        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net9.0\Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
+    </Target>
+
+    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug'">
+        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net9.0\Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
+    </Target>
+
+    <!--https://github.com/dotnet/sdk/issues/11803#issuecomment-2284885117-->
+    <!--<Target Name="RemoveTransitivePackageReferences" BeforeTargets="ResolveAssemblyReferences" DependsOnTargets="ResolveLockFileReferences">
+        <ItemGroup>
+            <TransitivePackageReferenceToRemove Include="%(Reference.NuGetPackageId)" Exclude="@(PackageReference)" KeepDuplicates="False" Condition="%(Reference.NuGetSourceType) == 'Package' And %(Reference.NuGetPackageId) != ''">
+                <NuGetPackageId>%(Reference.NuGetPackageId)</NuGetPackageId>
+            </TransitivePackageReferenceToRemove>
+            <Reference Remove="@(TransitivePackageReferenceToRemove)" MatchOnMetadata="NuGetPackageId" Condition="%(Reference.NuGetSourceType) == 'Package'" />
+            <TransitivePackageReferenceToRemove Remove="@(TransitivePackageReferenceToRemove)" />
+        </ItemGroup>
+    </Target>-->
+
+</Project>
