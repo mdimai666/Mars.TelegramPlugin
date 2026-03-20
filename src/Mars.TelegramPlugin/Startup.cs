@@ -1,12 +1,9 @@
 using Mars.Host.Shared.Services;
-using Mars.Nodes.Core;
-using Mars.Nodes.Core.Implements;
 using Mars.Plugin.Abstractions;
+using Mars.Plugin.Kit.Host;
 using Mars.Plugin.PluginHost;
 using Mars.TelegramPlugin;
 using Mars.TelegramPlugin.Nodes;
-using Mars.TelegramPlugin.Nodes.Forms;
-using Mars.TelegramPlugin.NodesImplement;
 using Mars.TelegramPlugin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,9 +24,7 @@ public class MainMarsTelegramPlugin : WebApplicationPlugin
 
     public override void ConfigureWebApplication(WebApplication app, PluginSettings settings)
     {
-        NodesLocator.RegisterAssembly(typeof(TelegramSenderNode).Assembly);
-        NodeFormsLocator.RegisterAssembly(typeof(TelegramSenderNodeForm).Assembly);
-        NodeImplementFabirc.RegisterAssembly(typeof(TelegramSenderNodeImpl).Assembly);
+        app.Services.AutoHostRegisterHelper([GetType().Assembly, typeof(TelegramSenderNode).Assembly]);
 
         var logger = MarsLogger.GetStaticLogger<MainMarsTelegramPlugin>();
         //logger.LogWarning($"> {PluginPackageName} - Work!!!!2" + Locale.Username);
@@ -37,7 +32,7 @@ public class MainMarsTelegramPlugin : WebApplicationPlugin
         var op = app.Services.GetRequiredService<IOptionService>();
 
 #if DEBUG
-        app.UseDevelopingServePluginFilesDefinition(this.GetType().Assembly, settings, [typeof(TelegramPluginFront).Assembly]);
+        app.UseDevelopingServePluginFilesDefinition(GetType().Assembly, settings, [typeof(TelegramPluginFront).Assembly]);
 #endif
 
         //op.RegisterOption<Example1Plugin1>(appendToInitialSiteData: true);

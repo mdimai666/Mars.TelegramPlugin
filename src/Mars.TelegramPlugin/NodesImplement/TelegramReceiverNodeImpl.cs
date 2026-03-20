@@ -2,12 +2,11 @@ using Mars.Nodes.Core;
 using Mars.Nodes.Core.Implements;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Mars.TelegramPlugin.NodesImplement;
 
-public class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>, INodeImplement
+internal class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>, INodeImplement
 {
     private readonly ILogger<TelegramReceiverNodeImpl> _logger;
 
@@ -15,16 +14,15 @@ public class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>, IN
     public IRED RED { get; set; }
     Node INodeImplement<Node>.Node => Node;
 
-    public TelegramReceiverNodeImpl(TelegramReceiverNode node, IRED red)
+    public TelegramReceiverNodeImpl(TelegramReceiverNode node, IRED red, ILogger<TelegramReceiverNodeImpl> logger)
     {
         Node = node;
         RED = red;
-
         Node.Config = RED.GetConfig(node.Config);
-        _logger = RED.ServiceProvider.GetRequiredService<ILogger<TelegramReceiverNodeImpl>>();
+        _logger = logger;
     }
 
-    public Task Execute(NodeMsg input, ExecuteAction callback)
+    public Task Execute(NodeMsg input, ExecuteAction callback, ExecutionParameters parameters)
     {
         _ = nameof(TelegramManager.OnReciveMessage);
 

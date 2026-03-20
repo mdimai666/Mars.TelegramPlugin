@@ -1,6 +1,5 @@
-using Mars.Nodes.Core;
+using Mars.Plugin.Front;
 using Mars.Plugin.Front.Abstractions;
-using Mars.TelegramPlugin.Nodes.Forms;
 using Mars.TelegramPlugin.Shared.Resources;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -13,16 +12,13 @@ public class TelegramPluginFront : IWebAssemblyPluginFront
 #if DEBUG
         Console.WriteLine("> plugin ConfigureServices!");
 #endif
-
-        NodesLocator.RegisterAssembly(typeof(TelegramSenderNode).Assembly);
-        NodeFormsLocator.RegisterAssembly(typeof(TelegramSenderNodeForm).Assembly);
     }
 
     public void ConfigureApplication(WebAssemblyHost app)
     {
+        app.Services.AutoFrontRegisterHelper([GetType().Assembly]);
 #if DEBUG
         Console.WriteLine("> plugin ConfigureApplication!" + Locale.Username);
 #endif
     }
 }
-

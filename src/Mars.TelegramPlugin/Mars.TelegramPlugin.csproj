@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
         <!--Author-->
         <PackageId>mdimai666.Mars.TelegramPlugin</PackageId>
-        <Version>0.5.2</Version>
-        <PackageVersion>0.5.2</PackageVersion>
+        <Version>0.5.4</Version>
+        <EntryAssembly>$(TargetFileName)</EntryAssembly>
+        <Fima>123</Fima>
         <!--Public-->
         <Authors>mdimai666</Authors>
         <Company>mdimai666</Company>
@@ -43,9 +44,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.6.2-alpha.26" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" PrivateAssets="all" />
-        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.6.2-alpha.26" />
+        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.3-alpha.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.*" PrivateAssets="all" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.3-alpha.7" />
         <PackageReference Include="Telegram.Bot" Version="22.5.1" />
     </ItemGroup>
 
@@ -69,11 +70,11 @@
     </Target>
 
     <Target Name="RunPostPublishScript" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
-        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net9.0\Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
+        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net10.0\Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
     </Target>
 
-    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug'">
-        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net9.0\Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
+    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug222'">
+        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net10.0\Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
     </Target>
 
     <!--https://github.com/dotnet/sdk/issues/11803#issuecomment-2284885117-->

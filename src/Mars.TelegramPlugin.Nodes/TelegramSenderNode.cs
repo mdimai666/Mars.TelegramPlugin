@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using Mars.Core.Attributes;
 using Mars.Nodes.Core;
-using Mars.Nodes.Core.Nodes;
+using Mars.Nodes.Core.Fields;
 
 namespace Mars.TelegramPlugin.Nodes;
 
 [FunctionApiDocument("./_plugin/Mars.TelegramPlugin/nodes/docs/TelegramSenderNode/TelegramSenderNode{.lang}.md")]
+[Display(GroupName = "telegram")]
 public class TelegramSenderNode : Node
 {
     public InputConfig<TelegramConfigNode> Config { get; set; }
@@ -15,9 +16,9 @@ public class TelegramSenderNode : Node
 
     public TelegramSenderNode()
     {
-        HaveInput = true;
         Color = "#56abdc";
-        Outputs = new List<NodeOutput> { new NodeOutput() };
+        Inputs = [new()];
+        Outputs = [new NodeOutput()];
         Icon = "/_plugin/Mars.TelegramPlugin/nodes/img/telegram.png";
     }
 

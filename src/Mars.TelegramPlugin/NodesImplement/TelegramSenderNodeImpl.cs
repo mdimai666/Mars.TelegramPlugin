@@ -3,38 +3,39 @@ using Mars.Nodes.Core;
 using Mars.Nodes.Core.Implements;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace Mars.TelegramPlugin.NodesImplement;
 
-public class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>, INodeImplement
+internal class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>, INodeImplement
 {
     private readonly ILogger<TelegramSenderNodeImpl> _logger;
+    private readonly TelegramManager _telegramManager;
 
     public TelegramSenderNode Node { get; }
     public IRED RED { get; set; }
     Node INodeImplement<Node>.Node => Node;
 
-    public TelegramSenderNodeImpl(TelegramSenderNode node, IRED red)
+    public TelegramSenderNodeImpl(TelegramSenderNode node, IRED red,
+                                TelegramManager telegramManager,
+                                ILogger<TelegramSenderNodeImpl> logger)
     {
         Node = node;
         RED = red;
-
         Node.Config = RED.GetConfig(node.Config);
-        _logger = RED.ServiceProvider.GetRequiredService<ILogger<TelegramSenderNodeImpl>>();
+        _telegramManager = telegramManager;
+        _logger = logger;
     }
 
-    public async Task Execute(NodeMsg input, ExecuteAction callback)
+    public async Task Execute(NodeMsg input, ExecuteAction callback, ExecutionParameters parameters)
     {
         try
         {
             //_logger.LogTrace("Execute");
 
-            var bm = RED.ServiceProvider.GetRequiredService<TelegramManager>();
-            var bot = bm.GetBot(Node.Config.Value);
+            var bot = _telegramManager.GetBot(Node.Config.Value);
 
             ArgumentNullException.ThrowIfNull(bot, nameof(bot));
 
