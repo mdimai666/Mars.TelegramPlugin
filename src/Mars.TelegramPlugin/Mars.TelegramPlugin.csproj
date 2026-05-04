@@ -44,9 +44,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.3-alpha.7" />
+        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.4-alpha.10" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.*" PrivateAssets="all" />
-        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.3-alpha.7" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.4-alpha.10" />
         <PackageReference Include="Telegram.Bot" Version="22.5.1" />
     </ItemGroup>
 

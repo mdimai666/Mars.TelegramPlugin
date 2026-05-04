@@ -28,7 +28,7 @@ internal class TelegramManager : IMarsAppLifetimeService
 
     private void _nodeService_OnAssignNodes()
     {
-        var configNodes = _nodeService.BaseNodes.Values.Where(node => node is TelegramConfigNode).Select(node => (node as TelegramConfigNode)!).ToArray();
+        var configNodes = _nodeService.BaseNodes.Values.OfType< TelegramConfigNode>().ToArray();
         RefreshConfigs(configNodes);
         UpdateRecepientsDict();
     }
@@ -81,7 +81,7 @@ internal class TelegramManager : IMarsAppLifetimeService
             var nodeId = _nodeId;
             var input = new NodeMsg { Payload = message };
             input.Add(message);
-            _ = _nodeService.Inject(_scopeFactory, nodeId, input);
+            _ = _nodeService.InjectAsync(_scopeFactory, nodeId, input);
         }
     }
 
