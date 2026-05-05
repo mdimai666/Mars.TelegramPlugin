@@ -13,7 +13,7 @@ public class TelegramReceiverNode : Node
 
     public TelegramReceiverNode()
     {
-        Inputs = [new()];
+        Inputs = [];
         Color = "#56abdc";
         Outputs = [new NodeOutput()];
         Icon = "/_plugin/Mars.TelegramPlugin/nodes/img/telegram.png";
