@@ -1,24 +1,26 @@
 using Mars.Nodes.Core;
-using Mars.Nodes.Core.Implements;
+using Mars.Nodes.Host.Shared;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Mars.TelegramPlugin.NodesImplement;
 
-internal class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>, INodeImplement
+internal class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>
 {
     private readonly ILogger<TelegramReceiverNodeImpl> _logger;
 
     public TelegramReceiverNode Node { get; }
-    public IRED RED { get; set; }
-    Node INodeImplement<Node>.Node => Node;
+    public IRuntimeNodeScope RNS { get; set; }
+    Node INodeImplement.Node => Node;
 
-    public TelegramReceiverNodeImpl(TelegramReceiverNode node, IRED red, ILogger<TelegramReceiverNodeImpl> logger)
+    public TelegramReceiverNodeImpl(TelegramReceiverNode node,
+                                    IRuntimeNodeScope rns,
+                                    ILogger<TelegramReceiverNodeImpl> logger)
     {
         Node = node;
-        RED = red;
-        Node.Config = RED.GetConfig(node.Config);
+        RNS = rns;
+        Node.Config = RNS.GetConfig(node.Config);
         _logger = logger;
     }
 

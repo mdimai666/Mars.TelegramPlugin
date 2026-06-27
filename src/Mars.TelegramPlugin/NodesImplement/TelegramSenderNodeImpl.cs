@@ -1,6 +1,6 @@
 using Mars.Core.Extensions;
 using Mars.Nodes.Core;
-using Mars.Nodes.Core.Implements;
+using Mars.Nodes.Host.Shared;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
 using Microsoft.Extensions.Logging;
@@ -9,22 +9,23 @@ using Telegram.Bot.Types;
 
 namespace Mars.TelegramPlugin.NodesImplement;
 
-internal class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>, INodeImplement
+internal class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>
 {
     private readonly ILogger<TelegramSenderNodeImpl> _logger;
     private readonly TelegramManager _telegramManager;
 
     public TelegramSenderNode Node { get; }
-    public IRED RED { get; set; }
-    Node INodeImplement<Node>.Node => Node;
+    public IRuntimeNodeScope RNS { get; set; }
+    Node INodeImplement.Node => Node;
 
-    public TelegramSenderNodeImpl(TelegramSenderNode node, IRED red,
-                                TelegramManager telegramManager,
-                                ILogger<TelegramSenderNodeImpl> logger)
+    public TelegramSenderNodeImpl(TelegramSenderNode node,
+                                    IRuntimeNodeScope rns,
+                                    TelegramManager telegramManager,
+                                    ILogger<TelegramSenderNodeImpl> logger)
     {
         Node = node;
-        RED = red;
-        Node.Config = RED.GetConfig(node.Config);
+        RNS = rns;
+        Node.Config = RNS.GetConfig(node.Config);
         _telegramManager = telegramManager;
         _logger = logger;
     }
@@ -53,7 +54,7 @@ internal class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>, INod
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex);
-            RED.DebugMsg(new DebugMessage { NodeId = Node.Id, Message = ex.Message, Level = Mars.Core.Models.MessageIntent.Error });
+            RNS.DebugMsg(new DebugMessage { NodeId = Node.Id, Message = ex.Message, Level = Mars.Core.Models.MessageIntent.Error });
         }
     }
 }

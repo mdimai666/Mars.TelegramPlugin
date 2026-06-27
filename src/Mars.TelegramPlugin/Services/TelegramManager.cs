@@ -28,7 +28,7 @@ internal class TelegramManager : IMarsAppLifetimeService
 
     private void _nodeService_OnAssignNodes()
     {
-        var configNodes = _nodeService.BaseNodes.Values.OfType< TelegramConfigNode>().ToArray();
+        var configNodes = _nodeService.BaseNodes.Values.OfType<TelegramConfigNode>().ToArray();
         RefreshConfigs(configNodes);
         UpdateRecepientsDict();
     }
@@ -38,7 +38,7 @@ internal class TelegramManager : IMarsAppLifetimeService
         _logger.LogTrace("RefreshConfigs");
 
         var toRemoveIds = _clientInstances.Values.Select(s => s.ConfigNode.Id).Except(configs.Select(s => s.Id)).ToList();
-        toRemoveIds.ForEach(configId => _clientInstances[configId].Dispose());
+        toRemoveIds.ForEach(configId => _clientInstances.GetValueOrDefault(configId)?.Dispose());
 
         foreach (var config in configs)
         {

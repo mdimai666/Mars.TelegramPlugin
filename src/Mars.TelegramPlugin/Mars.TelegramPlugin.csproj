@@ -6,7 +6,7 @@
 
         <!--Author-->
         <PackageId>mdimai666.Mars.TelegramPlugin</PackageId>
-        <Version>0.5.4</Version>
+        <Version>0.6.0</Version>
         <EntryAssembly>$(TargetFileName)</EntryAssembly>
         <Fima>123</Fima>
         <!--Public-->
@@ -40,14 +40,14 @@
 
     <ItemGroup>
         <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Link="wwwroot\icon.png" CopyToOutputDirectory="PreserveNewest" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.4-alpha.10" />
+        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.6-alpha.16" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.*" PrivateAssets="all" />
-        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.4-alpha.10" />
-        <PackageReference Include="Telegram.Bot" Version="22.5.1" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.6-alpha.16" />
+        <PackageReference Include="Telegram.Bot" Version="22.10.1" />
     </ItemGroup>
 
     <ItemGroup>
