@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Mars.Core.Attributes;
 using Mars.Nodes.Core.Nodes;
+using Mars.Nodes.Core.Nodes.Common;
 
 namespace Mars.TelegramPlugin.Nodes;
 
