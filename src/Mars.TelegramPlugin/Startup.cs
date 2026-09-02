@@ -1,4 +1,3 @@
-using Mars.Options.Abstractions.Services;
 using Mars.Plugin.Abstractions;
 using Mars.Plugin.Kit.Host;
 using Mars.Server.Abstractions.Services;
@@ -19,20 +18,11 @@ public class MainMarsTelegramPlugin : MarsPlugin
     public override void ConfigureWebApplicationBuilder(WebApplicationBuilder builder, PluginSettings settings)
     {
         builder.Services.AddSingleton<TelegramManager>();
-
     }
 
     public override void ConfigureWebApplication(WebApplication app, PluginSettings settings)
     {
         app.Services.AutoHostRegisterHelper([GetType().Assembly, typeof(TelegramSenderNode).Assembly]);
-
-        var logger = MarsLogger.GetStaticLogger<MainMarsTelegramPlugin>();
-        //logger.LogWarning($"> {PluginPackageName} - Work!!!!2" + Locale.Username);
-
-        var op = app.Services.GetRequiredService<IOptionService>();
-
-        //op.RegisterOption<Example1Plugin1>(appendToInitialSiteData: true);
-        //op.SetConstOption(new Example1PluginConstOptionForFront() { ForFrontValue = "123" }, appendToInitialSiteData: true);
     }
 
 }

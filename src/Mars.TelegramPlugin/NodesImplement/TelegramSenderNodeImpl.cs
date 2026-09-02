@@ -53,7 +53,7 @@ internal class TelegramSenderNodeImpl : INodeImplement<TelegramSenderNode>
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine(ex);
+            _logger.LogError(ex, "Failed to send telegram message to '{ChatId}'", Node.ChatId);
             RNS.DebugMsg(new DebugMessage { NodeId = Node.Id, Message = ex.Message, Level = Mars.Core.Models.MessageIntent.Error });
         }
     }

@@ -12,17 +12,20 @@ namespace Mars.TelegramPlugin.Services;
 
 internal class TelegramManager : IMarsAppLifetimeService
 {
-    Dictionary<string, TelegramClientInstance> _clientInstances = [];
+    private readonly Dictionary<string, TelegramClientInstance> _clientInstances = [];
+    private readonly object _sync = new();
     private readonly INodeService _nodeService;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TelegramManager> _logger;
+    private readonly ILogger<TelegramClientInstance> _instanceLogger;
     private Dictionary<string, string[]> _recepientsConfigIdAndNodeIds = [];
 
-    public TelegramManager(INodeService nodeService, IServiceScopeFactory scopeFactory, ILogger<TelegramManager> logger)
+    public TelegramManager(INodeService nodeService, IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory, ILogger<TelegramManager> logger)
     {
         _nodeService = nodeService;
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _instanceLogger = loggerFactory.CreateLogger<TelegramClientInstance>();
         _nodeService.OnAssignNodes += _nodeService_OnAssignNodes;
     }
 
@@ -35,63 +38,116 @@ internal class TelegramManager : IMarsAppLifetimeService
 
     public void RefreshConfigs(TelegramConfigNode[] configs)
     {
-        _logger.LogTrace("RefreshConfigs");
+        _logger.LogTrace("RefreshConfigs, configs: {Count}", configs.Length);
 
-        var toRemoveIds = _clientInstances.Values.Select(s => s.ConfigNode.Id).Except(configs.Select(s => s.Id)).ToList();
-        toRemoveIds.ForEach(configId => _clientInstances.GetValueOrDefault(configId)?.Dispose());
+        var configIds = configs.Select(c => c.Id).ToHashSet();
+        var toDispose = new List<TelegramClientInstance>();
 
-        foreach (var config in configs)
+        lock (_sync)
         {
-            //Telegram.Bot.TelegramBotClientOptions
-            if (_clientInstances.TryGetValue(config.Token, out var bot))
+            // конфиги, которых больше нет в схеме, — освобождаем их клиентов
+            foreach (var instance in _clientInstances.Values.Where(v => !configIds.Contains(v.ConfigNode.Id)).ToArray())
             {
-                //check param update
+                _clientInstances.Remove(instance.ConfigNode.Token);
+                toDispose.Add(instance);
             }
-            else
+
+            foreach (var config in configs)
             {
-                _clientInstances.Add(config.Token, new TelegramClientInstance(config, this));
+                // у конфига ещё нет токена — клиента быть не должно
+                if (string.IsNullOrWhiteSpace(config.Token))
+                {
+                    if (_clientInstances.Values.FirstOrDefault(v => v.ConfigNode.Id == config.Id) is { } empty)
+                    {
+                        _clientInstances.Remove(empty.ConfigNode.Token);
+                        toDispose.Add(empty);
+                    }
+                    continue;
+                }
+
+                if (_clientInstances.TryGetValue(config.Token, out var instance))
+                {
+                    instance.UpdateConfig(config);
+                }
+                else
+                {
+                    // токен сменился у того же конфига — пересоздаём клиента
+                    if (_clientInstances.Values.FirstOrDefault(v => v.ConfigNode.Id == config.Id) is { } replaced)
+                    {
+                        _clientInstances.Remove(replaced.ConfigNode.Token);
+                        toDispose.Add(replaced);
+                    }
+
+                    _clientInstances.Add(config.Token, new TelegramClientInstance(config, this, _instanceLogger));
+                }
             }
         }
+
+        foreach (var instance in toDispose)
+            instance.Dispose();
     }
 
     void UpdateRecepientsDict()
     {
-        var nodes = _nodeService.BaseNodes.Values.Where(node => !node.Disabled && node is TelegramReceiverNode tg && tg.Config.Value != null)
-                                            .Select(node => (node as TelegramReceiverNode)!).ToArray();
+        var nodes = _nodeService.BaseNodes.Values
+            .Where(node => !node.Disabled && node is TelegramReceiverNode tg && tg.Config.Value != null)
+            .Select(node => (TelegramReceiverNode)node)
+            .ToArray();
 
-        _recepientsConfigIdAndNodeIds = nodes.GroupBy(s => s.Config.Id).ToDictionary(s => s.Key, s => s.Select(node => node.Id).ToArray());
+        lock (_sync)
+        {
+            _recepientsConfigIdAndNodeIds = nodes
+                .GroupBy(s => s.Config.Id)
+                .ToDictionary(s => s.Key, s => s.Select(node => node.Id).ToArray());
+        }
     }
 
-    public TelegramBotClient? GetBot(TelegramConfigNode? config) => config == null ? null : _clientInstances.GetValueOrDefault(config.Token)?.Bot;
-
-    public async Task<Message> SendMessage(string chatIdOrUsername, string text)
+    public TelegramBotClient? GetBot(TelegramConfigNode? config)
     {
-        var bot = _clientInstances.First().Value.Bot;
-        return await bot.SendMessage(new ChatId(chatIdOrUsername), text);
+        if (config == null)
+            return null;
+
+        lock (_sync)
+            return _clientInstances.GetValueOrDefault(config.Token)?.Bot;
     }
 
     internal void OnReciveMessage(TelegramClientInstance instance, Message message, Telegram.Bot.Types.Enums.UpdateType type)
     {
-        _logger.LogWarning($"OnReciveMessage: {message.Text?.TextEllipsis(20)}");
+        _logger.LogTrace("Message received: {Text}", message.Text?.TextEllipsis(20));
 
-        var nodes = _recepientsConfigIdAndNodeIds.GetValueOrDefault(instance.ConfigNode.Id) ?? [];
+        string[] nodeIds;
+        lock (_sync)
+            nodeIds = _recepientsConfigIdAndNodeIds.GetValueOrDefault(instance.ConfigNode.Id) ?? [];
 
-        foreach (var _nodeId in nodes)
+        foreach (var nodeId in nodeIds)
         {
-            var nodeId = _nodeId;
+            _ = InjectToNodeAsync(nodeId, message);
+        }
+    }
+
+    private async Task InjectToNodeAsync(string nodeId, Message message)
+    {
+        try
+        {
             var input = new NodeMsg { Payload = message };
             input.Add(message);
-            _ = _nodeService.InjectAsync(_scopeFactory, nodeId, input);
+            await _nodeService.InjectAsync(_scopeFactory, nodeId, input);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to inject telegram message into node {NodeId}", nodeId);
         }
     }
 
     internal void OnStatusChange(TelegramClientInstance instance, string status)
     {
-        _logger.LogTrace($"OnStatusChange: config='{instance.ConfigNode.Name}', status='{status}'");
+        _logger.LogTrace("Status change: config='{Config}', status='{Status}'", instance.ConfigNode.Name, status);
 
-        var nodes = _recepientsConfigIdAndNodeIds.GetValueOrDefault(instance.ConfigNode.Id) ?? [];
+        string[] nodeIds;
+        lock (_sync)
+            nodeIds = _recepientsConfigIdAndNodeIds.GetValueOrDefault(instance.ConfigNode.Id) ?? [];
 
-        foreach (var nodeId in nodes)
+        foreach (var nodeId in nodeIds)
         {
             _nodeService.BroadcastStatus(nodeId, new NodeStatus { Text = status });
         }

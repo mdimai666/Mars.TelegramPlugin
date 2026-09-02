@@ -1,7 +1,6 @@
 using Mars.Nodes.Abstractions;
 using Mars.Nodes.Core;
 using Mars.TelegramPlugin.Nodes;
-using Mars.TelegramPlugin.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Mars.TelegramPlugin.NodesImplement;
@@ -26,8 +25,6 @@ internal class TelegramReceiverNodeImpl : INodeImplement<TelegramReceiverNode>
 
     public Task Execute(NodeMsg input, ExecuteAction callback, ExecutionParameters parameters)
     {
-        _ = nameof(TelegramManager.OnReciveMessage);
-
         _logger.LogTrace("Execute");
 
         callback(input);
