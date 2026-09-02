@@ -1,18 +1,18 @@
-using Mars.Host.Shared.Services;
+using Mars.Options.Abstractions.Services;
 using Mars.Plugin.Abstractions;
 using Mars.Plugin.Kit.Host;
-using Mars.Plugin.PluginHost;
+using Mars.Server.Abstractions.Services;
 using Mars.TelegramPlugin;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: WebApplicationPlugin(typeof(MainMarsTelegramPlugin))]
+[assembly: MarsPlugin(typeof(MainMarsTelegramPlugin))]
 
 namespace Mars.TelegramPlugin;
 
-public class MainMarsTelegramPlugin : WebApplicationPlugin
+public class MainMarsTelegramPlugin : MarsPlugin
 {
     public const string PluginPackageName = "mdimai666.Mars.TelegramPlugin";
 

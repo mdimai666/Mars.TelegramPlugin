@@ -1,7 +1,7 @@
 using Mars.Core.Extensions;
-using Mars.Host.Shared.Services;
-using Mars.Host.Shared.Startup;
+using Mars.Nodes.Abstractions.Services;
 using Mars.Nodes.Core;
+using Mars.Server.Abstractions.Startup;
 using Mars.TelegramPlugin.Nodes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,11 +12,11 @@ namespace Mars.TelegramPlugin.Services;
 
 internal class TelegramManager : IMarsAppLifetimeService
 {
-    Dictionary<string, TelegramClientInstance> _clientInstances = new();
+    Dictionary<string, TelegramClientInstance> _clientInstances = [];
     private readonly INodeService _nodeService;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TelegramManager> _logger;
-    private Dictionary<string, string[]> _recepientsConfigIdAndNodeIds = new();
+    private Dictionary<string, string[]> _recepientsConfigIdAndNodeIds = [];
 
     public TelegramManager(INodeService nodeService, IServiceScopeFactory scopeFactory, ILogger<TelegramManager> logger)
     {

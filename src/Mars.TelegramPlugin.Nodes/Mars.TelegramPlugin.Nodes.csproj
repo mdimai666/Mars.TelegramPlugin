@@ -19,8 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Front" Version="0.7.7-alpha.20" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.*" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Front" Version="0.8.3-alpha.13" />
     </ItemGroup>
 
     <ItemGroup>

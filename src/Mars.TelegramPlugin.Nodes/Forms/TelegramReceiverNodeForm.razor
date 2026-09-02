@@ -1,9 +1,8 @@
-@using AppFront.Shared.Components
+@using Mars.Admin.Framework.Components
 @using Mars.Nodes.Core
 @using Mars.Nodes.Core.Attributes
 @using Mars.Nodes.FormEditor
 @using Mars.Nodes.FormEditor.EditForms.Components
-@using Microsoft.FluentUI.AspNetCore.Components
 @inherits NodeEditForm
 @attribute [NodeEditFormForNode(typeof(TelegramReceiverNode))]
 
@@ -22,4 +21,3 @@
     TelegramReceiverNode Node { get => (TelegramReceiverNode)Value!; set => Value = value; }
 
 }
-

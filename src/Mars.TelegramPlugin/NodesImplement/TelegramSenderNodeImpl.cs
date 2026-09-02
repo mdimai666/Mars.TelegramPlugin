@@ -1,6 +1,6 @@
 using Mars.Core.Extensions;
+using Mars.Nodes.Abstractions;
 using Mars.Nodes.Core;
-using Mars.Nodes.Host.Shared;
 using Mars.TelegramPlugin.Nodes;
 using Mars.TelegramPlugin.Services;
 using Microsoft.Extensions.Logging;

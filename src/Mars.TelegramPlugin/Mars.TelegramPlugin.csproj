@@ -7,12 +7,11 @@
         <!--Author-->
         <PackageId>mdimai666.Mars.TelegramPlugin</PackageId>
         <Version>0.6.1</Version>
-        <EntryAssembly>$(TargetFileName)</EntryAssembly>
-        <Fima>123</Fima>
         <!--Public-->
         <Authors>mdimai666</Authors>
         <Company>mdimai666</Company>
         <Product>Mars.TelegramPlugin</Product>
+        <Title>Mars.TelegramPlugin</Title>
         <PackageTags>Mars;telegram</PackageTags>
         <Description>
             Mars.TelegramPlugin - provide telegram functions for Mars
@@ -26,9 +25,6 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
         <EnableDynamicLoading>true</EnableDynamicLoading>
-        <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
-        <!--<CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>-->
-        <!--<DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>-->
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,14 +36,17 @@
 
     <ItemGroup>
         <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" Link="wwwroot\icon.png" CopyToOutputDirectory="PreserveNewest" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Sdk" Version="0.8.3-alpha.13">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="mdimai666.Mars.Plugin.PluginPublishScript" Version="0.7.7-alpha.20" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.*" PrivateAssets="all" />
-        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.7.7-alpha.20" />
-        <PackageReference Include="Telegram.Bot" Version="22.10.1" />
+        <PackageReference Include="mdimai666.Mars.Plugin.Kit.Host" Version="0.8.3-alpha.13" />
+        <PackageReference Include="Telegram.Bot" Version="22.10.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -60,32 +59,5 @@
             <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-
-    <Target Name="RunPostPublishScript" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release111'">
-        <Exec Command="dotnet $(OutDir)Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
-    </Target>
-
-    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug111'">
-        <Exec Command="dotnet $(OutDir)Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
-    </Target>
-
-    <Target Name="RunPostPublishScript" AfterTargets="Publish" Condition="'$(Configuration)' == 'Release'">
-        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net10.0\Mars.Plugin.PluginPublishScript.dll --run-postpublish --ProjectName=$(ProjectName) --out=$(PublishDir) --ProjectDir=$(ProjectDir)" />
-    </Target>
-
-    <Target Name="RunPostCompileDebugScript" AfterTargets="CoreBuild" Condition="'$(Configuration)' == 'Debug222'">
-        <Exec Command="dotnet $(NuGetPackageRoot)mdimai666.Mars.Plugin.PluginPublishScript\0.6.2-alpha.25\lib\net10.0\Mars.Plugin.PluginPublishScript.dll --run-postdebugcompile --ProjectName=$(ProjectName) --out=$(OutDir) --ProjectDir=$(ProjectDir)" />
-    </Target>
-
-    <!--https://github.com/dotnet/sdk/issues/11803#issuecomment-2284885117-->
-    <!--<Target Name="RemoveTransitivePackageReferences" BeforeTargets="ResolveAssemblyReferences" DependsOnTargets="ResolveLockFileReferences">
-        <ItemGroup>
-            <TransitivePackageReferenceToRemove Include="%(Reference.NuGetPackageId)" Exclude="@(PackageReference)" KeepDuplicates="False" Condition="%(Reference.NuGetSourceType) == 'Package' And %(Reference.NuGetPackageId) != ''">
-                <NuGetPackageId>%(Reference.NuGetPackageId)</NuGetPackageId>
-            </TransitivePackageReferenceToRemove>
-            <Reference Remove="@(TransitivePackageReferenceToRemove)" MatchOnMetadata="NuGetPackageId" Condition="%(Reference.NuGetSourceType) == 'Package'" />
-            <TransitivePackageReferenceToRemove Remove="@(TransitivePackageReferenceToRemove)" />
-        </ItemGroup>
-    </Target>-->
 
 </Project>
