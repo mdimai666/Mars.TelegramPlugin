@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+    <File Path="release.ps1" />
+  </Folder>
+  <Project Path="src/Mars.TelegramPlugin.Nodes/Mars.TelegramPlugin.Nodes.csproj" />
+  <Project Path="src/Mars.TelegramPlugin.Shared/Mars.TelegramPlugin.Shared.csproj" />
+  <Project Path="src/Mars.TelegramPlugin/Mars.TelegramPlugin.csproj" />
+</Solution>
